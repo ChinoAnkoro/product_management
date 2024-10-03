@@ -31,7 +31,17 @@
     </div>
     <div class="col-12 mb-2 mt-2">
         <div class="form-group">
-            <strong>コメント:</strong> {{ $product->detail }}
+            <strong>コメント:</strong> {{ $product->comment }}
+        </div>
+    </div>
+    <div class="col-12 mb-2 mt-2">
+        <div class="form-group">
+            <strong>商品画像:</strong>
+            @if ($product->img_path) 
+            <img src="{{ Storage::url($product->img_path) }}" alt="{{ $product->product_name }}" width="50">
+            @else
+            <p>画像がありません</p>
+            @endif
         </div>
     </div>
     <div class="col-12 mb-2 mt-2">

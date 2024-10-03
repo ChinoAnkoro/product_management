@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Company;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\ProductRequest; // ProductRequest をインポート
 
 class ProductController extends Controller
 {
@@ -65,34 +67,27 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request) // ProductRequest を使用
     {
-        $validated = $request->validate([
-            'image' => 'nullable|image|max:2048',
-            'product_name' => 'required|max:20',
-            'price' => 'required|integer',
-            'company_id' => 'required|integer',
-            'stock' => 'required|integer',
-            'comment' => 'nullable|max:140',
-        ]);
-    
         DB::beginTransaction();
         try {
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('images', 'public');
+            $validated = $request->validated(); // バリデーション済みデータを取得
+
+            if ($request->hasFile('img_path')) {
+                $imagePath = $request->file('img_path')->store('images', 'public');
                 $validated['img_path'] = $imagePath; // `image` から `img_path` に変更
             }
-    
+
             $validated['user_id'] = Auth::user()->id;
             Product::create($validated);
-    
+
             DB::commit();
             return redirect()->route('products.index')
                 ->with('success', '商品を登録しました');
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('商品登録エラー: ' . $e->getMessage());
-    
+
             return back()->withErrors('商品登録中にエラーが発生しました。');
         }
     }
@@ -118,32 +113,35 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product) // ProductRequest を使用
     {
-        $request->validate([
-            'image' => 'image|max:2048',
-            'product_name' => 'required|max:20',
-            'price' => 'required|integer',
-            'company_id' => 'required|integer', // `maker_id` から `company_id` に変更
-            'stock' => 'required|integer',
-            'comment' => 'nullable|max:140',
-        ]);
+        $validated = $request->validated(); // バリデーション済みデータを取得
 
-        // フィールドの更新
-        if ($request->hasFile('image'))
+        // 更新するフィールドを設定
+        $product->product_name = $validated['product_name'];
+        $product->company_id = $validated['company_id'];
+        $product->price = $validated['price'];
+        $product->stock = $validated['stock'];
+        $product->comment = $validated['comment'];
+
+        // 画像の処理
+        if ($request->hasFile('img_path'))
         {
-            $product->img_path = $request->file('image')->store('images', 'public'); // `image` から `img_path` に変更
+            // 既存の画像がある場合は削除
+            if ($product->img_path && Storage::exists('public/images/'.$product->img_path)) 
+            {
+                Storage::delete('public/images/'.$product->img_path);
+            }
+
+            // 新しい画像を保存
+            $imageName = time().'.'.$request->img_path->extension();
+            $request->img_path->storeAs('public/images', $imageName);
+            $product->img_path = 'images/' . $imageName;  // 画像のパスを更新
         }
-        $product->product_name = $request->input('product_name');
-        $product->price = $request->input('price');
-        $product->company_id = $request->input('company_id'); // `maker_id` から `company_id` に変更
-        $product->stock = $request->input('stock');
-        $product->detail = $request->input('detail');
-        $product->user_id = Auth::user()->id;
+
         $product->save();
 
-        return redirect()->route('products.edit', $product->id)
-                     ->with('success', '商品が更新されました。');
+        return redirect()->route('products.index')->with('success', '商品情報が更新されました');
     }
 
     /**

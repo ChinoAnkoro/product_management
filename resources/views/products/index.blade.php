@@ -59,7 +59,7 @@
             <tr>
                 <td class="text-end">{{ $product->id }}</td>
                 <td>
-                    @if ($product->img_path) <!-- 画像パスを修正 -->
+                    @if ($product->img_path) 
                         <img class="img-thumbnail" src="{{ Storage::url($product->img_path) }}" alt="{{ $product->product_name }}" width="50" height="50"/>
                     @else
                         画像なし

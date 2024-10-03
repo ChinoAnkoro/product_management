@@ -76,11 +76,11 @@
 
         <div class="row mb-3">
             <div class="col-md-3 d-flex align-items-center">
-                <label for="detail" class="form-label">コメント</label>
+                <label for="comment" class="form-label">コメント</label>
             </div>
             <div class="col-md-9">
-                <textarea id="detail" class="form-control" style="height:100px" name="detail" placeholder="コメント">{{ old('detail') }}</textarea>
-                @error('detail')
+                <textarea id="comment" class="form-control" style="height:100px" name="comment" placeholder="コメント">{{ old('comment') }}</textarea>
+                @error('comment')
                     <div class="invalid-feedback d-block">
                         {{ $message }}
                     </div>
@@ -90,11 +90,11 @@
 
         <div class="row mb-3">
             <div class="col-md-3 d-flex align-items-center">
-                <label for="image" class="form-label">商品画像</label>
+                <label for="img_path" class="form-label">商品画像</label>
             </div>
             <div class="col-md-9">
-                <input id="image" type="file" name="image" class="form-control">
-                @error('image')
+                <input id="img_path" type="file" name="img_path" class="form-control">
+                @error('img_path')
                     <div class="invalid-feedback d-block">
                         {{ $message }}
                     </div>
