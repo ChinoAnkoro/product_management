@@ -141,7 +141,7 @@ class ProductController extends Controller
 
         $product->save();
 
-        return redirect()->route('products.index')->with('success', '商品情報が更新されました');
+        return redirect()->route('products.edit', $product->id)->with('success', '商品情報が更新されました');
     }
 
     /**
