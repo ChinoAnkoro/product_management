@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -76,5 +78,10 @@
             @yield('content')
         </main>
     </div>
+    <script>
+        const productsIndexUrl = "{{ route('products.index') }}"; // Bladeでルートを定義
+    </script>
+    <script src="{{ asset('/js/destroy.js') }}"></script>
+    <script src="{{ asset('/js/search.js')}}"></script>
 </body>
 </html>

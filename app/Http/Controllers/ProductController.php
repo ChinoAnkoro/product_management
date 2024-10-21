@@ -18,39 +18,60 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // 商品リストのクエリを構築
         $productsQuery = Product::query();
 
         // 商品名での検索
-        if ($request->has('search') && $request->input('search') != '') 
+        if ($request->has('search') && $request->input('search') != '')
         {
             $productsQuery->where('product_name', 'like', '%' . $request->input('search') . '%');
         }
 
-        // 会社での検索 
+        // 会社での検索
         if ($request->has('company_id') && $request->input('company_id') != '')
         {
             $productsQuery->where('company_id', $request->input('company_id'));
         }
 
+        // 価格での検索
+        if ($request->has('min_price') && $request->input('min_price') != '')
+        {
+            $productsQuery->where('price', '>=', $request->input('min_price'));
+        }
+        if ($request->has('max_price') && $request->input('max_price') != '')
+        {
+            $productsQuery->where('price', '<=', $request->input('max_price'));
+        }
+
+        // 在庫数での検索
+        if ($request->has('min_stock') && $request->input('min_stock') != '')
+        {
+            $productsQuery->where('stock', '>=', $request->input('min_stock'));
+        }
+        if ($request->has('max_stock') && $request->input('max_stock') != '')
+        {
+            $productsQuery->where('stock', '<=', $request->input('max_stock'));
+        }
+
+        // ソート処理
+        if ($request->has('sort') && in_array($request->sort, ['id', 'product_name', 'price', 'stock']))
+        {
+            $order = $request->input('order', 'asc');
+            $productsQuery->orderBy($request->sort, $order);
+        }
+        else
+        {
+            $productsQuery->orderBy('id', 'DESC'); // デフォルトのソート
+        }
+
         // 商品リストを取得
-        $products = $productsQuery->with('company') // `company` リレーションを使う
+        $products = $productsQuery->with('company')
             ->orderBy('id', 'DESC')
             ->paginate(5);
 
-        // 会社のリストを取得
         $companies = Company::all();
-
-        // 認証ユーザーの名前とページIDを設定
-        $user_name = Auth::check() ? Auth::user()->name : null;
-        $page_id = $request->input('page', 1); // ページIDがない場合はデフォルトで1
-        $i = ($page_id - 1) * 5;
 
         return view('products.index', [
             'products' => $products,
-            'user_name' => $user_name,
-            'page_id' => $page_id,
-            'i' => $i,
             'companies' => $companies,
         ]);
     }
@@ -150,7 +171,6 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index')
-        ->with('success', '商品' . $product->product_name . 'を削除しました');
+        return response()->json(['message' => '商品 ' . $product->product_name . ' を削除しました']);
     }
 }

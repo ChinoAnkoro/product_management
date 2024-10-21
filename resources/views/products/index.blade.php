@@ -13,24 +13,49 @@
     <!-- 検索フォーム -->
     <div class="row mb-3">
         <div class="col-lg-12">
-            <form action="{{ route('products.index') }}" method="GET">
-                @csrf
-                <div class="row">
-                    <div class="col-md-3 mb-2">
-                        <input type="text" name="search" class="form-control" placeholder="商品名で検索" value="{{ request('search') }}">
+            <form id="search-form" method="GET">
+                <div class="row mb-2">
+                    <div class="col-md-4 mb-2">
+                        <label for="search-input" class="form-label">商品名で検索</label>
+                        <input type="text" name="search" id="search-input" class="form-control" placeholder="商品名で検索" value="{{ request('search') }}">
                     </div>
-                    <div class="col-md-3 mb-2">
-                        <select name="company_id" class="form-select"> 
+                    <div class="col-md-4 mb-2">
+                        <label for="company-select" class="form-label">メーカー</label>
+                        <select name="company_id" id="company-select" class="form-select">
                             <option value="">メーカー</option>
-                            @foreach ($companies as $company) 
+                            @foreach ($companies as $company)
                                 <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
                                     {{ $company->company_name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3 mb-2">
-                        <button type="submit" class="btn btn-primary rounded-pill w-100">検索</button>
+                    <div class="col-md-4 mb-2 text-end">
+                        <button type="submit" class="btn btn-primary rounded-pill">検索</button>
+                    </div>
+                </div>
+    
+                <div class="row mb-2">
+                    <div class="col-md-2 mb-2">
+                        <label for="min_price" class="form-label">最低価格</label>
+                        <input type="number" name="min_price" id="min_price" class="form-control" placeholder="最低価格" value="{{ request('min_price') }}">
+                    </div>
+                    <div class="col-md-1 mb-2 text-center align-self-center">～</div>
+                    <div class="col-md-2 mb-2">
+                        <label for="max_price" class="form-label">最高価格</label>
+                        <input type="number" name="max_price" id="max_price" class="form-control" placeholder="最高価格" value="{{ request('max_price') }}">
+                    </div>
+                </div>
+    
+                <div class="row mb-2">
+                    <div class="col-md-2 mb-2">
+                        <label for="min_stock" class="form-label">最低在庫数</label>
+                        <input type="number" name="min_stock" id="min_stock" class="form-control" placeholder="最低在庫数" value="{{ request('min_stock') }}">
+                    </div>
+                    <div class="col-md-1 mb-2 text-center align-self-center">～</div>
+                    <div class="col-md-2 mb-2">
+                        <label for="max_stock" class="form-label">最高在庫数</label>
+                        <input type="number" name="max_stock" id="max_stock" class="form-control" placeholder="最高在庫数" value="{{ request('max_stock') }}">
                     </div>
                 </div>
             </form>
@@ -38,55 +63,13 @@
     </div>
 
     <!-- 商品リストテーブル -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>商品画像</th>
-                <th>商品名</th>
-                <th>価格</th>
-                <th>在庫数</th>
-                <th>メーカー名</th>
-                <th>
-                    @auth
-                    <a class="btn btn-success rounded-pill" href="{{ route('products.create') }}">新規登録</a>
-                    @endauth
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($products as $product)
-            <tr>
-                <td class="text-end">{{ $product->id }}</td>
-                <td>
-                    @if ($product->img_path) 
-                        <img class="img-thumbnail" src="{{ Storage::url($product->img_path) }}" alt="{{ $product->product_name }}" width="50" height="50"/>
-                    @else
-                        画像なし
-                    @endif
-                </td>
-                <td>
-                    {{ $product->product_name }}
-                </td>
-                <td class="text-end">{{ number_format($product->price) }}￥</td>
-                <td class="text-end">{{ $product->stock }}</td>
-                <td>{{ $product->company->company_name }}</td>
-                <td class="text-center">
-                    @auth
-                        <a class="btn btn-primary btn-sm rounded-pill" href="{{ route('products.show', $product->id) }}">詳細</a>
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm rounded-pill" onclick='return confirm("削除しますか？");'>削除</button>
-                        </form>
-                    @endauth
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div id="product-list">
+        @include('products.partials.product_table', ['products' => $products])
+    </div>
 
     <!-- ページネーション -->
-    {!! $products->links('pagination::bootstrap-5') !!}
+    <div id="pagination-links">
+        {!! $products->links('pagination::bootstrap-5') !!}
+    </div>
 </div>
 @endsection

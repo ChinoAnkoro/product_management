@@ -16,7 +16,6 @@ class Product extends Model
         'stock',
         'comment',
         'img_path',
-        'user_id',
     ];
 
     /**

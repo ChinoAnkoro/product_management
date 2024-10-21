@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('stock');
             $table->text('comment')->nullable();
             $table->string('img_path')->nullable();
-            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }
