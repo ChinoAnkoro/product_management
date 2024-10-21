@@ -8,6 +8,14 @@
     </div>
 </div>
 
+<div>
+    <p>価格: {{ $product->price }} 円</p>
+    <p>在庫: {{ $product->stock }} 個</p>
+
+    <input type="number" id="quantity-input" min="1" value="1">
+    <button id="buy-button" data-product-id="{{ $product->id }}">購入</button>
+</div>
+
 <div class="row">
     <div class="col-12 mb-2 mt-2">
         <div class="form-group">

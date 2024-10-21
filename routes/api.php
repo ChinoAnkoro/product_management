@@ -16,6 +16,7 @@ use App\Http\Controllers\SalesController;
 */
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
     return $request->user();
 });
+
+Route::post('/sales', [SalesController::class, 'store']);
