@@ -3,17 +3,15 @@ $(document).ready(function () {
     $('#search-form').on('submit', function (e) {
         e.preventDefault(); // フォームのデフォルトの送信を防止
 
-        // フォームデータを取得
         let formData = $(this).serialize();
 
         // Ajaxリクエストを送信
         $.ajax({
-            url: productsIndexUrl, // ここを修正
+            url: productsIndexUrl,
             method: "GET",
             data: formData,
             dataType: 'html',
             success: function (response) {
-                // 商品リストとページネーションの部分を更新
                 $('#product-list').html($(response).find('#product-list').html());
                 $('#pagination-links').html($(response).find('#pagination-links').html());
             },

@@ -32,12 +32,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        <!-- Navigation Items Here -->
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -78,11 +77,12 @@
             @yield('content')
         </main>
     </div>
+    
     <script>
         const productsIndexUrl = "{{ route('products.index') }}"; // Bladeでルートを定義
     </script>
+    <script src="{{ asset('/js/buy.js') }}"></script>
+    <script src="{{ asset('/js/search.js') }}"></script>
     <script src="{{ asset('/js/destroy.js') }}"></script>
-    <script src="{{ asset('/js/search.js')}}"></script>
-    <script src="{{ asset('/js/buy.js')}}"></script>
 </body>
 </html>

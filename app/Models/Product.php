@@ -18,6 +18,19 @@ class Product extends Model
         'img_path',
     ];
 
+    // 在庫のチェック
+    public function hasSufficientStock($quantity)
+    {
+        return $this->stock >= $quantity;
+    }
+
+    // 在庫を減らす
+    public function reduceStock($quantity)
+    {
+        $this->stock -= $quantity;
+        $this->save();
+    }
+    
     /**
      * Get the company that owns the product.
      */

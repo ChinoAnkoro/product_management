@@ -1,31 +1,31 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // 削除ボタンのクリックイベント
-    document.querySelectorAll('.delete-product').forEach(function (button) {
-        button.addEventListener('click', function (event) {
+document.addEventListener("DOMContentLoaded", function() {
+    // 親要素にイベントリスナーを登録して、削除ボタンがクリックされたときに処理を実行
+    document.addEventListener("click", function(event) {
+        // クリックされた要素が削除ボタンかどうかをチェック
+        if (event.target.classList.contains("delete-product")) {
             event.preventDefault();
+            const id = event.target.getAttribute("data-id");
             
-            const productId = this.getAttribute('data-id');
-
-            if (confirm('本当に削除しますか？')) {
-                fetch(`/products/${productId}`, {
-                    method: 'DELETE',
+            if (confirm("本当に削除しますか？")) {
+                fetch(`/products/${id}`, {
+                    method: "DELETE",
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
                     }
                 })
                 .then(response => {
                     if (response.ok) {
-                        alert('削除しました');
-                        location.reload();  // ページをリロードして削除を反映
+                        alert("削除しました");
+                        location.reload();
                     } else {
-                        alert('削除に失敗しました');
+                        alert("削除に失敗しました");
                     }
                 })
                 .catch(error => {
-                    console.error('エラーが発生しました:', error);
-                    alert('エラーが発生しました');
+                    console.error("エラーが発生しました:", error);
+                    alert("エラーが発生しました");
                 });
             }
-        });
+        }
     });
 });
